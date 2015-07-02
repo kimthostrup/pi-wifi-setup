@@ -1,8 +1,19 @@
-<html>
-    <head>
-        <title>{{ title }}</title>
-    </head>
-    <body>
-        <h1>Hello, {{ user.nickname }}_user!</h1>
-    </body>
-</html>
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Welcome to Reach Network setup</h1>
+    <form action="" method="post" name="wifi">
+        {{ form.hidden_tag() }}
+        <p>
+            Please, enter network SSID:<br>
+            {{ form.ssid(size = 20) }}<br>
+        </p>
+        <p>
+            Please, enter network key:<br>
+            {{ form.key(size = 20) }}<br>
+        </p>
+        <p>
+            <input type="submit" value="Submit">
+        </p>
+{% endblock %}
+
