@@ -33,6 +33,9 @@ def index():
         print("Running " + cmd)
         system(cmd)
 
+        cmd = "reboot"
+        system(cmd)
+
         return redirect("/")
 
-    return render_template("index.html", title = "ReachSetup Home", user = user, form = form)
+    return render_template("index.html", title = "ReachSetup Home", form = form)
