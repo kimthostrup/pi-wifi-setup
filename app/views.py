@@ -20,18 +20,19 @@ def index():
 
         print(str(data[39]))
 
-        data[39] = data[39][:-2] + "'" + str(form.ssid.data) + "' )"
+        data[39] = data[39][:-2] + "'" + str(form.ssid.data) + "' )\n"
 
         print("Hello! this is the new /etc/rc.local file")
         print(str(data[39]))
 
-#       with open("/etc/rc.local", "w") as f:
-#            f.writelines(data)
+        with open("/etc/rc.local", "w") as f:
+             f.writelines(data)
 
         cmd = ["wpa_passphrase", str(form.ssid.data), str(form.key.data), ">>", "/etc/wpa_supplicant/wpa_supplicant.conf"]
         cmd = " ".join(cmd)
         print("Running " + cmd)
-        # system(cmd)
+        system(cmd)
+
         return redirect("/")
 
     return render_template("index.html", title = "ReachSetup Home", user = user, form = form)
