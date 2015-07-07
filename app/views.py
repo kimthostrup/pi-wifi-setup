@@ -2,16 +2,31 @@ from flask import render_template, flash, redirect
 from app import app
 from forms import WifiForm
 from os import system, popen
+from subprocess import check_output, Popen, PIPE
 
 def scanAvailableNetworks():
+    networks = []
+
     cmd = ["iwlist", "wlan0", "scan", "|", "grep", "ESSID"]
+    # cmd = ["echo", "Hello!!!!"]
     cmd = " ".join(cmd)
 
-    proc = popen(cmd)
-    output = proc.read()
+    proc = Popen(cmd, stdout = PIPE, shell = True, bufsize = 2048)
+    out = proc.communicate() 
+
+    out = out[0].split("\n")
+
+    # view results
+    for val in out:
+        if val:
+            first = val.find('"')
+            last = val.rfind('"')
+            networks.append(val[first + 1:last])
+        
     print("### NETWORK SCAN OUTPUT ###")
-    print(output)
-    proc.close()
+    print(networks)
+
+    return networks
 
 def addNewNetwork(ssid, key):
 
@@ -37,9 +52,10 @@ def addNewNetwork(ssid, key):
 def index():
     form = WifiForm()
 
-    form.ssid.choices = [(1, "LOL"), (2, "ROFL")]
+    choices = scanAvailableNetworks()
+    choices = [(i + 1, j) for i, j in enumerate(choices)]
 
-    scanAvailableNetworks()
+    form.ssid.choices = choices 
 
     if form.validate_on_submit():
         flash("New Wifi network data submitted: SSID == " + form.ssid.data + ", key == " + "*" * len(form.key.data) + ".")
