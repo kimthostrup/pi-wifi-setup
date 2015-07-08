@@ -24,6 +24,8 @@ def scanAvailableNetworks():
             networks.append(val[first + 1:last])
         
     print("### NETWORK SCAN OUTPUT ###")
+    print(out)
+    print("\n### EXTRACTED NETWORKS ###")
     print(networks)
 
     return networks
@@ -37,13 +39,13 @@ def addNewNetwork(ssid, key):
         data = f.readlines()
 
     # now we will be looking for the added network during startup
-    data[39] = data[39][:-2] + "'" + str(form.ssid.data) + "' )\n"
+    data[39] = data[39][:-2] + "'" + ssid + "' )\n"
 
     with open("/etc/rc.local", "w") as f:
         f.writelines(data)
 
     # we have the key, and so should the wpa_supplicant
-    cmd = ["wpa_passphrase", str(form.ssid.data), str(form.key.data), ">>", "/etc/wpa_supplicant/wpa_supplicant.conf"]
+    cmd = ["wpa_passphrase", ssid, key, ">>", "/etc/wpa_supplicant/wpa_supplicant.conf"]
     cmd = " ".join(cmd)
     system(cmd)
 
@@ -58,10 +60,15 @@ def index():
     form.ssid.choices = choices 
 
     if form.validate_on_submit():
-        flash("New Wifi network data submitted: SSID == " + form.ssid.data + ", key == " + "*" * len(form.key.data) + ".")
-        print("New Wifi network data submitted: SSID == " + str(form.ssid.data) + ", key == " + str(form.key.data) + ".")
+        # get network name and key
+        ssid = [item for item in choices if item[0] == form.ssid.data]
+        ssid = str(ssid[0][1])
+        key = str(form.key.data)
+        
+        flash("New Wifi network data submitted: SSID == " + ssid + ", key == " + "*" * len(key) + ".")
+        print("New Wifi network data submitted: SSID == " + ssid + ", key == " + key + ".")
 
-        addNewNetwork(str(form.ssid.data), str(form.key.data))
+        addNewNetwork(str(ssid), str(key))
 
         # to apply changes and try to connect to the new network we have to reboot
         cmd = "reboot"
