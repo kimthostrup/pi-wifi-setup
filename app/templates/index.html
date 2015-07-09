@@ -1,19 +1,17 @@
-{% extends "base.html" %}
+{% extends "bootstrap/base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
 
 {% block content %}
-    <h1>Welcome to Reach Network setup</h1>
+<div class="well">
+    <h3>Welcome to Reach Network setup</h3>
     <form action="" method="post" name="wifi">
         {{ form.hidden_tag() }}
-        <p>
-            Please, enter network SSID:<br>
-            {{ form.ssid(size = 20) }}<br>
-        </p>
-        <p>
-            Please, enter network key:<br>
-            {{ form.key(size = 20) }}<br>
-        </p>
-        <p>
-            <input type="submit" name="submit_and_reboot" value="Submit & Reboot">
-        </p>
+        <div class="help-block">Please, choose your network SSID</div>
+        {{ wtf.form_field(form.ssid) }}
+        <div class="help-block">Enter the network key</div>
+        {{ wtf.form_field(form.key) }}
+        <input type="submit" name="submit_and_reboot" value="Submit & Reboot">
+    </form>
+</div>
 {% endblock %}
 

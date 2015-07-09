@@ -12,7 +12,7 @@ def scanAvailableNetworks():
     cmd = " ".join(cmd)
 
     proc = Popen(cmd, stdout = PIPE, shell = True, bufsize = 2048)
-    out = proc.communicate() 
+    out = proc.communicate()
 
     out = out[0].split("\n")
 
@@ -22,7 +22,7 @@ def scanAvailableNetworks():
             first = val.find('"')
             last = val.rfind('"')
             networks.append(val[first + 1:last])
-        
+
     print("### NETWORK SCAN OUTPUT ###")
     print(out)
     print("\n### EXTRACTED NETWORKS ###")
@@ -55,16 +55,18 @@ def index():
     form = WifiForm()
 
     choices = scanAvailableNetworks()
-    choices = [(i + 1, j) for i, j in enumerate(choices)]
 
-    form.ssid.choices = choices 
+    if choices != []:
+        choices = [(i + 1, j) for i, j in enumerate(choices)]
+
+    form.ssid.choices = choices
 
     if form.validate_on_submit():
         # get network name and key
         ssid = [item for item in choices if item[0] == form.ssid.data]
         ssid = str(ssid[0][1])
         key = str(form.key.data)
-        
+
         flash("New Wifi network data submitted: SSID == " + ssid + ", key == " + "*" * len(key) + ".")
         print("New Wifi network data submitted: SSID == " + ssid + ", key == " + key + ".")
 
@@ -77,5 +79,3 @@ def index():
         return redirect("/")
 
     return render_template("index.html", title = "ReachSetup Home", form = form)
-
-
