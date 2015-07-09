@@ -35,16 +35,22 @@ def addNewNetwork(ssid, key):
     # we got SSID and key validated, now we should add them
     # to our startup script
 
-    with open("/etc/rc.local", "r") as f:
+    network_setup_script = "/home/reach/ReachSetup/network_setup.sh"
+
+    with open(network_setup_script, "r") as f:
         data = f.readlines()
 
     # now we will be looking for the added network during startup
-    data[39] = data[39][:-2] + "'" + ssid + "' )\n"
+    data[20] = data[20][:-2] + "'" + ssid + "' )\n"
 
-    with open("/etc/rc.local", "w") as f:
+    with open(network_setup_script, "w") as f:
         f.writelines(data)
 
     # we have the key, and so should the wpa_supplicant
+    cmd = ["echo", "-en", "\n", ">>", "/etc/wpa_supplicant/wpa_supplicant.conf"]
+    cmd = " ".join(cmd)
+    system(cmd)
+
     cmd = ["wpa_passphrase", ssid, key, ">>", "/etc/wpa_supplicant/wpa_supplicant.conf"]
     cmd = " ".join(cmd)
     system(cmd)

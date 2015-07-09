@@ -1,26 +1,7 @@
 #!/bin/bash -e
-#
-# rc.local
-#
-# This script is executed at the end of each multiuser runlevel.
-# Make sure that the script will "exit 0" on success or any other
-# value on error.
-#
-# In order to enable or disable this script just change the execution
-# bits.
-#
-# By default this script does nothing.
+     
+# Handle boot network sequence
 
-echo 1 >/sys/devices/virtual/misc/watchdog/disable
-
-#/sbin/first-install.sh
-
-bluetooth_rfkill_event >/dev/null 2>&1 &
-rfkill unblock bluetooth
-#bluetoothd &
-
-# RPi Network Conf Bootstrapper
- 
 createAdHocNetwork(){
     echo "Creating ad-hoc network"
     ifconfig wlan0 down
@@ -32,12 +13,12 @@ createAdHocNetwork(){
     /usr/sbin/dhcpd wlan0
     echo "Ad-hoc network created"
 }
- 
+
 echo "================================="
 echo "====Reach Network Setup v0.0====="
 echo "================================="
 echo "Scanning for known WiFi networks"
-ssids=( 'emlidltd' '456' 'egor_network' 'egor_network' )
+ssids=( 'emlidltd' '456' )
 connected=false
 ifconfig wlan0 up
 for ssid in "${ssids[@]}"
@@ -63,11 +44,11 @@ do
         echo "Not in range, WiFi with SSID:" $ssid
     fi
 done
- 
+
 if ! $connected; then
     createAdHocNetwork
     # start a web interface to add new ssid
     /home/reach/ReachSetup/run.py &
 fi
- 
+
 exit 0
