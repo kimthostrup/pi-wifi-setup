@@ -18,7 +18,7 @@ echo "================================="
 echo "====Reach Network Setup v0.0====="
 echo "================================="
 echo "Scanning for known WiFi networks"
-ssids=( 'emlidltd' '456' )
+ssids=( 'emlidltd' 'Igor' )
 connected=false
 ifconfig wlan0 up
 for ssid in "${ssids[@]}"

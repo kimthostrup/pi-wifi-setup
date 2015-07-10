@@ -23,14 +23,44 @@ def scanAvailableNetworks():
             last = val.rfind('"')
             networks.append(val[first + 1:last])
 
-    print("### NETWORK SCAN OUTPUT ###")
-    print(out)
-    print("\n### EXTRACTED NETWORKS ###")
+    print("\n### VISIBLE NETWORKS ###")
     print(networks)
 
     return networks
 
+def cleanOldNetworkKeys(ssid):
+    # if we are trying to recover after adding a wrong network key
+    # we need to delete older network structures for the same SSID 
+    # in wpa_supplicant
+
+    data_after_clean = []
+
+    with open("/etc/wpa_supplicant/wpa_supplicant.conf", "r") as f:
+        data = f.readlines()
+
+    for index, line in reversed(list(enumerate(data))):
+        print("index = " + str(index) + " line = " + line)
+
+        if "{" in line:
+            if 'ssid="' + ssid + '"' in data[index + 1]:
+
+                # this network is the same one we want to add
+                # should delete it first
+                i = index
+
+                while("}" not in data[i]):
+                    del data[i]
+
+                del data[i]
+
+
+    # write the modified file back
+    with open("/etc/wpa_supplicant/wpa_supplicant.conf", "w") as f:
+        f.writelines(data)
+
 def addNewNetwork(ssid, key):
+
+    cleanOldNetworkKeys(ssid)
 
     # we got SSID and key validated, now we should add them
     # to our startup script
@@ -47,7 +77,7 @@ def addNewNetwork(ssid, key):
         f.writelines(data)
 
     # we have the key, and so should the wpa_supplicant
-    cmd = ["echo", "-en", "\n", ">>", "/etc/wpa_supplicant/wpa_supplicant.conf"]
+    cmd = ["echo", "-e", "\n", ">>", "/etc/wpa_supplicant/wpa_supplicant.conf"]
     cmd = " ".join(cmd)
     system(cmd)
 
