@@ -1,5 +1,5 @@
 #!/bin/bash -e
-     
+
 # Handle boot network sequence
 
 createAdHocNetwork(){
@@ -18,7 +18,7 @@ echo "================================="
 echo "====Reach Network Setup v0.0====="
 echo "================================="
 echo "Scanning for known WiFi networks"
-ssids=( 'emlidltd' 'Igor' )
+ssids=( 'emlidltd' 'Igor' '456' '456' )
 connected=false
 ifconfig wlan0 up
 for ssid in "${ssids[@]}"
@@ -34,11 +34,15 @@ do
         then
             echo "Connected to WiFi"
             connected=true
+            # /home/reach/ReachView/server.py &
             break
         else
             echo "DHCP server did not respond with an IP lease (DHCPOFFER)"
+            echo "There was some trouble connecting to" $ssid
+            echo "Please check if the key is correct"
             wpa_cli terminate
-            break
+            ifconfig wlan0 down
+            ifconfig wlan0 up
         fi
     else
         echo "Not in range, WiFi with SSID:" $ssid
