@@ -71,7 +71,7 @@ def addNewNetwork(ssid, key):
         data = f.readlines()
 
     # now we will be looking for the added network during startup
-    data[20] = data[20][:-2] + "'" + ssid + "' )\n"
+    data[25] = data[25][:-2] + "'" + ssid + "' )\n"
 
     with open(network_setup_script, "w") as f:
         f.writelines(data)

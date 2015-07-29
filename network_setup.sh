@@ -4,21 +4,26 @@
 
 createAdHocNetwork(){
     echo "Creating ad-hoc network"
+    # get the last symbols of this boards' mac address
+    mac_address=$(ifconfig -a | grep wlan0)
+    mac_address='ReachNetwork'${mac_address: -7}
     ifconfig wlan0 down
     ifconfig wlan0 up
     iwconfig wlan0 mode ad-hoc
     iwconfig wlan0 key aaaaa11111 #WEP key
-    iwconfig wlan0 essid ReachNetwork #SSID
+    iwconfig wlan0 essid $mac_address #SSID
     ifconfig wlan0 10.0.0.200 netmask 255.255.255.0 up
     /usr/sbin/dhcpd wlan0
     echo "Ad-hoc network created"
 }
 
+date --set 2015-07-29
+
 echo "================================="
 echo "====Reach Network Setup v0.0====="
 echo "================================="
 echo "Scanning for known WiFi networks"
-ssids=( 'emlidltd' 'Igor' '456' '456' )
+ssids=( 'Igor' '456' 'Phone' 'EML33T5' )
 connected=false
 ifconfig wlan0 up
 for ssid in "${ssids[@]}"
